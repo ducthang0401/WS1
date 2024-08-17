@@ -1,0 +1,99 @@
+[
+{
+	"uri": "//localhost:1313/",
+	"title": "NAT Gateway",
+	"tags": [],
+	"description": "",
+	"content": "Work NAT Gateway Overall This lab guides you through the process of setting up a NAT Gateway to enable internet access for instances in a private subnet within Amazon Web Services (AWS). The lab aims to familiarize users with Network Address Translation (NAT) and provides a step-by-step demonstration of configuring the required resources to establish internet connectivity for instances in a private subnet\nContent Introduction Preparation Create Public Route Table and Configure Create NAT Gateway Private route table configure NAT Gateway Clean up resources "
+},
+{
+	"uri": "//localhost:1313/2-prerequiste/2.1-preparevpc/2.1.1-createvpc/",
+	"title": "Create VPC",
+	"tags": [],
+	"description": "",
+	"content": "Create VPC Lab VPC Go to VPC service management console Click Your VPC. Click Create VPC. At the Create VPC page. In the Name tag field, enter Lab VPC. In the IPv4 CIDR field, enter: 10.10.0.0/16. Click Create VPC. "
+},
+{
+	"uri": "//localhost:1313/1-introduce/",
+	"title": "Introduction",
+	"tags": [],
+	"description": "",
+	"content": "A NAT Gateway is a device in AWS that enables instances within a private subnet to connect to the internet or other AWS services, while preventing inbound connections from the internet. It works by forwarding outbound traffic from the private instances, translating their private IP addresses to the NAT Gateway\u0026rsquo;s IP address, and then routing the response back to the instances. This ensures that instances remain secure from direct internet exposure.\nThere are two types of NAT devices: NAT Instances and NAT Gateways.\nNAT Instances use Amazon Linux AMIs and have limitations based on the instance type and region, without support for IPv6 traffic. NAT Gateways, on the other hand, are charged hourly and also do not support IPv6 traffic. However, AWS recommends using NAT Gateways due to their better availability and higher bandwidth compared to NAT Instances. "
+},
+{
+	"uri": "//localhost:1313/2-prerequiste/2.1-preparevpc/",
+	"title": "Preparing VPC",
+	"tags": [],
+	"description": "",
+	"content": "In this step, we are going to create a Virtual Private Cloud (VPC), which provides a logically isolated section of the AWS cloud where users can launch resources such as instances, subnets, and gateways.\nTo learn how to create EC2 instances and VPCs with public/private subnets, you can refer to the lab:\nWorks with Amazon VPC Content Creat VPC Create Subnet Create Internet Gateway "
+},
+{
+	"uri": "//localhost:1313/2-prerequiste/2.2-createec2/",
+	"title": "Create EC2",
+	"tags": [],
+	"description": "",
+	"content": "CREATE PUBLIC EC2 INSTANCE Access the AWS Management Console:\nNavigate to EC2, then Click on Instances In the EC2 interface:\nSelect Instances\nChoose Launch instances\nProvide a Name and tags for the instance, enter public instance\nChoose the AMI:\nSelect Quick Start Choose Amazon Linux 2 Select an AMI Select an Instance type (t2micro) and opt to Create a new key pair\nIn the Create key pair interface:\nSpecify the Key pair name, e.g., NAT-keypair (optional name, you can set any). Choose Key pair type: RSA Select Private key file format: .pem Configure the Network: Select the VPC: Lab VPC\nChoose the Subnet: MyPublicSubnet\nEnable Auto-assign public IP For Firewall (Security Group), select creat security group Complete the instance creation CREAT EC2 INSTANCE IN PRIVATE SUBNET In the EC2 interface:\nSelect Instances\nChoose Launch instances Repeat the steps to create an EC2 in a public instance.\nConfigure the Network: Select the VPC: Lab VPC Choose the Subnet: My Private Subnet Disable Auto-assign public IP. (If not disabling it, ensure you’ve checked the configuration for automatically allocating public IP for the subnet). Select EC2 Private: Choose Details Store Private IPv4 addresses "
+},
+{
+	"uri": "//localhost:1313/2-prerequiste/2.1-preparevpc/2.1.2-createsubnet/",
+	"title": "Create Subnet",
+	"tags": [],
+	"description": "",
+	"content": "In this task, we are going to create both public and private subnets within the VPC. Public subnets have internet connectivity, while private subnets do not have direct internet access.\nIn the AWS Management Console, navigate to Subnets in the left panel of the VPC page.\nCREATE PUBLIC SUBNET Click Create subnet. At the Create subnet page.\nVPC ID : select Lab VPC Subnet Name : Enter MyPublicSubnet Availability Zone : No Preference IPv4 CIDR block : Enter 10.0.0.0/24 Click on Create subnet button. Let\u0026rsquo;s enable Auto Assign public IP to Instances created within this subnet: Select MyPublicSubnet , Click on Actions. Click on Edit subnet settings. Enable auto-assign public IPv4 address : Check Click on Save. Oke, the public Subnet has been created\nCREATE PRIVATE SUBNET Click on Create subnet.\nVPC ID : select Lab VPC Subnet Name : Enter MyPrivateSubnet Availability Zone : No Preference IPv4 CIDR block : Enter 10.0.1.0/24 Click on Create subnet button. "
+},
+{
+	"uri": "//localhost:1313/2-prerequiste/",
+	"title": "Preparation ",
+	"tags": [],
+	"description": "",
+	"content": "\rIf you face any issues, please go through FAQs and Troubleshooting for Labs.\nTo learn how to create EC2 instances and VPCs with public/private subnets, you can refer to the lab:\nAbout Amazon EC2\nWorks with Amazon VPC\nEnsure you have a stable internet connection to interact with the AWS Management Console and SSH into the EC2 instances.\nOnce you\u0026rsquo;ve confirmed these preparations, you\u0026rsquo;ll be ready to start the lab by signing into the AWS Management Console.\nContent Prepare VPC Create EC2 "
+},
+{
+	"uri": "//localhost:1313/3-publicroutetable/",
+	"title": "Creat public route table and config",
+	"tags": [],
+	"description": "",
+	"content": "In this step, we are going to create a public route table and configure it to associate with the public subnet. The public route table defines how traffic is routed between the VPC and the internet.\nIn the VPC Management Console: Click Route table \u0026ndash;\u0026gt; Creat Route table\nConfigure the Route table: Name: route table public VPC: Lab VPC Create Attach to IGW (Internet Gateway) Click public route table \u0026ndash;\u0026gt; Edit route In the Edit route interface, choose Add route Destination: 0.0.0.0/0 (Internet) Target: Internet Gateway Save changes Associate the Public Subnet to the route table Select PublicRouteTable: Click on the Subnet Associations tab. Click on Edit subnet associations. On the next page, select MyPublicSubnet from the list displayed. Click on Save associations. "
+},
+{
+	"uri": "//localhost:1313/2-prerequiste/2.1-preparevpc/2.1.3-createigw/",
+	"title": "Create Internet Gateway",
+	"tags": [],
+	"description": "",
+	"content": "In this task, we are going to create an Internet Gateway, which acts as a bridge between the VPC and the internet, allowing instances in the VPC to communicate with the internet.\nCREATE INTERNET GATEWAY In the VPC Management Console:\nClick Internet Gateway Click Create Internet Gateway At the Creat Internet Gateway page:\nName tag: MyIGW Creat ATTACH AN IGW TO A VPC Click on Actions, Select Attach to VPC. VPC : Select Lab VPC Click on Attach internet gateway. Now, MyIGW is attached to Lab VPC\n"
+},
+{
+	"uri": "//localhost:1313/4-createnat/",
+	"title": "Create NAT Gateway",
+	"tags": [],
+	"description": "",
+	"content": "In this step, we are going to create a NAT Gateway, which provides internet access to instances in the private subnet. The NAT Gateway acts as a middleman to forward traffic between the private subnet and the internet.\nAllocate Elastic IP Address Select Elastic IPs \u0026ndash;\u0026gt; Allocate Elastic IP address Public IPv4 address pool: Select Amazon’s pool of IPv4 addresses Create NAT Gateway Select NAT Gateway \u0026ndash;\u0026gt; Create NAT gateway In NAT gateway interface:\nName: Enter NAT-gw Subnet: Select MypublicSubnet Connectivity type: Select Public Elastic IP allocation ID: Select recently created Elastic IP Create NAT gateway "
+},
+{
+	"uri": "//localhost:1313/5-updatertandconfignat/",
+	"title": "Private route table and config NAT Gateway",
+	"tags": [],
+	"description": "",
+	"content": " Create Route table - Private and assign to private subnets In the VPC interface: Select Route Table Select Create route table In the Route table interface:\nName: Enter route table private VPC: Select Lab VPC Select Create route table In the Route table private interface:\nSelect Subnet Associations Select Edit subnet associations Choose My Private Subnet Select Save associations Associate to NAT Gateway: In the Route table private interface:\nSelect Routes Select Edit routes In the Edit routes interface:\nSelect Add route Destination: 0.0.0.0/0 Target: NAT Gateway Select Save changes "
+},
+{
+	"uri": "//localhost:1313/6-cleanup/",
+	"title": "Clean up resources",
+	"tags": [],
+	"description": "",
+	"content": "We will take the following steps to delete the resources we created in this exercise.\nGo to EC2 service management console\nClick Security Group. Select SG that have been created. Click Delete. Go to EC2 service management console\nClick Instances. Select both instances that have been created. Click Instance state. Click Terminate instance, then click Terminate to confirm. Go to EC2 service management console\nClick Elastic IPs. Select Elastic IPs that have been created. Click Released Go to VPC management console\nClick subnet. Select subnets that have been created. Click Delete. Go to VPC management console\nClick Internet Gateway. Select IGW that have been created. Click Delete. Go to VPC management console\nClick route table. Select route tables that have been created. Click Delete. Go to VPC management console\nClick NAT Gateway. Select NAT Gateway that have been created. Click Delete. Go to VPC management console\nClick VPC. Select VPC that have been created. Click Delete. "
+},
+{
+	"uri": "//localhost:1313/categories/",
+	"title": "Categories",
+	"tags": [],
+	"description": "",
+	"content": ""
+},
+{
+	"uri": "//localhost:1313/tags/",
+	"title": "Tags",
+	"tags": [],
+	"description": "",
+	"content": ""
+}]

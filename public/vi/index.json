@@ -1,0 +1,99 @@
+[
+{
+	"uri": "//localhost:1313/vi/",
+	"title": "AWS NAT Gateway",
+	"tags": [],
+	"description": "",
+	"content": "Làm việc với NAT Gateway Tổng quan Bài lab này hướng dẫn bạn qua quá trình thiết lập một NAT Gateway để kích hoạt truy cập internet cho các phiên bản trong một private subnet trong Amazon Web Services (AWS). Giúp người dùng làm quen với Network Address Translation (NAT) và cung cấp một hướng dẫn từng bước về cách cấu hình các tài nguyên cần thiết để thiết lập kết nối internet cho các phiên bản trong một private subnet. Nội dung Giới thiệu Các bước chuẩn bị Tạo Public Route Table và cấu hình Tạo NAT Gateway Cập nhật Route Table và cấu hình NAT Gateway Dọn dẹp tài nguyên "
+},
+{
+	"uri": "//localhost:1313/vi/2-prerequiste/2.1-preparevpc/",
+	"title": "Chuẩn bị VPC và EC2",
+	"tags": [],
+	"description": "",
+	"content": "\u0026ldquo;Trong bước này, chúng ta sẽ tạo một Virtual Private Cloud (VPC), đây là một phần cách ly logic của đám mây AWS, nơi người dùng có thể khởi chạy các tài nguyên như instance,subnet và gateway.\u0026rdquo;\nĐể tìm hiểu cách tạo VPC với public/private subnet các bạn có thể tham khảo bài lab :\nLàm việc với Amazon VPC Nội dung Tạo VPC Tạo subnet Tạo Internet Gateway "
+},
+{
+	"uri": "//localhost:1313/vi/1-introduce/",
+	"title": "Giới thiệu",
+	"tags": [],
+	"description": "",
+	"content": "NAT Gateway là một dịch vụ trong AWS cho phép các instances trong một private subnet kết nối với internet hoặc các dịch vụ AWS khác, đồng thời ngăn chặn các kết nối từ internet đến các instances đó. NAT Gateway hoạt động bằng cách chuyển tiếp lưu lượng ra ngoài từ các private instances , chuyển đổi địa chỉ IP riêng của chúng thành địa chỉ IP của NAT Gateway, sau đó định tuyến phản hồi trở lại các instances. Điều này đảm bảo rằng các instances vẫn được bảo vệ khỏi sự tiếp xúc trực tiếp với internet.\nCó hai loại thiết bị NAT: NAT Instances và NAT Gateways.\nNAT Instances sử dụng Amazon Linux AMIs và có các giới hạn dựa trên loại phiên bản và khu vực, đồng thời không hỗ trợ lưu lượng IPv6. NAT Gateways được tính phí theo giờ và cũng không hỗ trợ lưu lượng IPv6. Tuy nhiên, AWS khuyến nghị sử dụng NAT Gateways vì chúng có độ sẵn sàng cao hơn và băng thông lớn hơn so với NAT Instances. "
+},
+{
+	"uri": "//localhost:1313/vi/2-prerequiste/2.1-preparevpc/2.1.1-createvpc/",
+	"title": "Tạo VPC ",
+	"tags": [],
+	"description": "",
+	"content": "Tạo VPC Lab VPC Truy cập giao diện quản trị dịch vụ VPC Click Your VPC. Click Create VPC. Tại trang Create VPC. Tại mục Name tag điền Lab VPC. Tại mục IPv4 CIDR điền : 10.10.0.0/16. Click Create VPC. "
+},
+{
+	"uri": "//localhost:1313/vi/2-prerequiste/",
+	"title": "Các bước chuẩn bị",
+	"tags": [],
+	"description": "",
+	"content": "\rNếu bạn gặp bất kỳ vấn đề nào, vui lòng xem qua FAQs and Troubleshooting for Labs.\nĐể tìm hiểu cách tạo các EC2 instance và VPC với public/private subnet các bạn có thể tham khảo bài lab :\nGiới thiệu về Amazon EC2 Làm việc với Amazon VPC Đảm bảo rằng bạn có kết nối internet ổn định để tương tác với AWS Management Console và SSH vào các phiên bản EC2. Sau khi bạn đã xác nhận các bước chuẩn bị này, bạn sẽ sẵn sàng bắt đầu phòng thí nghiệm bằng cách đăng nhập vào AWS Management Console.\nNội dung Chuẩn bị VPC Tạo EC2 "
+},
+{
+	"uri": "//localhost:1313/vi/2-prerequiste/2.2-createec2/",
+	"title": "Tạo EC2",
+	"tags": [],
+	"description": "",
+	"content": "TẠO PUBLIC EC2 INSTANCE Truy cập vào AWS Management Console:\nĐiều hướng đến EC2\nNhấp vào Instances\nimage\nTrong giao diện EC2:\nChọn Instances\nChọn Launch instances\nCung cấp Name and tags cho phiên bản, nhập EC2 Public\nChọn AMI:\nChọn Quick Start Chọn Amazon Linux 2 Chọn một AMI Chọn loại instance (Instance type) và chọn tạo một key pair (Create a new key pair) Trong giao diện Create key pair: Chỉ định tên cặp khóa (Key pair name), ví dụ: aws-keypair (tên tùy chọn, bạn có thể đặt bất kỳ tên nào). Chọn loại key pair (Key pair type): RSA Chọn định dạng tệp khóa riêng tư (Private key file format): .pem Cấu hình mạng (Configure the Network): Chọn VPC: Lab VPC Chọn Subnet: MyPublicSubnet Bật Auto-assign public IP Đối với Firewall (Security Group), chọn Select existing security group Chọn Public subnet -SG Nhấp vào Launch instance Hoàn tất việc tạo instance (Complete the instance creation) TẠO EC2 INSTANCE TRONG PRIVATE SUBNET Trong giao diện EC2:\nChọn Instances\nChọn Launch instances\nCung cấp Name and tags, nhập EC2 Private\nChọn AMI:\nChọn Quick Start Chọn Amazon Linux 2 Chọn một AMI Chọn loại instance (Instance type). Chọn tên key pair (Key pair name): aws-keypair Cấu hình mạng (Configure the Network): Chọn VPC: Lab VPC Chọn Subnet: My Private Subnet Tắt Auto-assign public IP. Nếu không tắt, hãy đảm bảo rằng bạn đã kiểm tra cấu hình tự động gán IP công cộng cho subnet. Hoàn tất việc tạo phiên bản (Complete the instance creation): Nhấp vào View all instances Chọn EC2 Private: Chọn Details Lưu trữ địa chỉ Private IPv4 addresses "
+},
+{
+	"uri": "//localhost:1313/vi/2-prerequiste/2.1-preparevpc/2.1.2-createsubnet/",
+	"title": "Tạo Subnet",
+	"tags": [],
+	"description": "",
+	"content": "Trong bài lab này, chúng ta sẽ tạo cả private subnet và public subnet trong VPC. Public subnet có kết nối internet, trong khi private subnet không có quyền truy cập internet trực tiếp.\nTrong AWS Management Console, điều hướng đến Subnets trong VPC\nTẠO PUBLIC SUBNET Nhấp vào Create subnet. Image\u0026hellip;\nTại trang Create subnet:\nVPC ID: chọn Lab VPC Tên Subnet: Nhập MyPublicSubnet Availability Zone: Không lựa chọn cụ thể IPv4 CIDR block: Nhập 10.0.0.0/24 Nhấp vào nút Create subnet. Hãy bật tính năng tự động gán public IP address cho các instance được tạo trong subnet này: Chọn MyPublicSubnet, nhấp vào Actions. Nhấp vào Edit subnet settings. Enable auto-assign public IPv4 address: Đánh dấu chọn Nhấp vào Save. • Ảnh\nOke, Public subnet đã được tạo\nTẠO SUBNET RIÊNG TƯ Nhấp vào Create subnet.\nIMAGE\u0026hellip;\nVPC ID: chọn Lab VPC Tên Subnet: Nhập MyPrivateSubnet Availability Zone: Không lựa chọn cụ thể IPv4 CIDR block: Nhập 10.0.1.0/24 Nhấp vào nút Create subnet. Ảnh\n"
+},
+{
+	"uri": "//localhost:1313/vi/2-prerequiste/2.1-preparevpc/2.1.3-createigw/",
+	"title": "Tạo Internet Gateway",
+	"tags": [],
+	"description": "",
+	"content": "Trong bài lab này, chúng ta sẽ tạo một Internet Gateway, đóng vai trò như một cầu nối giữa VPC và internet, cho phép các instances trong VPC giao tiếp với internet.\nTẠO INTERNET GATEWAY Trong VPC Management Console:\nNhấp vào Internet Gateway Nhấp vào Create Internet Gateway Ảnh\nTại trang Create Internet Gateway:\nTên thẻ (Name tag): My IGW Nhấp vào Create Ảnh\nATTACH IGW VÀO VPC Nhấp vào Actions, chọn Attach to VPC. VPC: Chọn Lab VPC Nhấp vào Attach internet gateway. Ảnh\nBây giờ, MyIGW đã được gắn vào Lab VPC.\n"
+},
+{
+	"uri": "//localhost:1313/vi/3-publicroutetable/",
+	"title": "Tạo public route table và cấu hình",
+	"tags": [],
+	"description": "",
+	"content": "Trong bước này, chúng ta sẽ tạo một bảng định tuyến công cộng và cấu hình nó để liên kết với subnet công cộng. Bảng định tuyến công cộng xác định cách thức lưu lượng được định tuyến giữa VPC và internet.\nTrong Bảng điều khiển VPC Nhấp vào Route table \u0026ndash;\u0026gt; Creat route table Imageeeeeeeeeeeeeeee\nCấu hình Route table Tên: public route table VPC: Lab VPC Tạo Imageeeeeeeeeeeeeeee\nAttach với IGW (Internet Gateway) Nhấp vào public route table \u0026ndash;\u0026gt; Edit route Trong giao diện Edit route, chọn Add route Đích đến: 0.0.0.0/0 (Internet) Mục tiêu: Internet Gateway Lưu thay đổi Imageeeeeeeeeeeeeee\nLiên kết public subnet với route table Chọn public route table: Nhấp vào tab Subnet Association. Nhấp vào Edit Subnet Association. Trên trang tiếp theo, chọn MyPublicSubnet từ danh sách hiển thị. Nhấp vào Lưu liên kết. Imageeeeeeeeeee\n"
+},
+{
+	"uri": "//localhost:1313/vi/4-createnat/",
+	"title": "Tạo NAT Gateway",
+	"tags": [],
+	"description": "",
+	"content": "Trong bước này, chúng ta sẽ tạo một NAT Gateway, cung cấp quyền truy cập internet cho các phiên bản trong subnet riêng tư. NAT Gateway đóng vai trò trung gian để chuyển tiếp lưu lượng giữa subnet riêng tư và internet.\nCấp phát Elastic IP address Chọn Elastic IPs \u0026ndash;\u0026gt; Allocate Elastic IP imageeeeee Trong giao diện Allocate Elastic IP:\nDải địa chỉ IPv4 công cộng: Chọn Amazon’s pool of IPv4 addresses Cấp phát imageeeeee Tạo NAT Gateway: Chọn NAT Gateway \u0026ndash;\u0026gt; Tạo NAT gateway Imageeeeeeeeeee Trong giao diện NAT gateway:\nTên: Nhập NAT gateway Subnet: Chọn MypublicSubnet Loại kết nối: Chọn Public ID cấp phát IP Elastic: Chọn Elastic IP vừa được tạo Tạo NAT gateway Imageeeeeeeee Tạo thành công\n"
+},
+{
+	"uri": "//localhost:1313/vi/5-updatertandconfignat/",
+	"title": "Cập nhật route table và cấu hình NAT Gateway",
+	"tags": [],
+	"description": "",
+	"content": " Tạo route table - Private và Assign cho các private subnet Trong giao diện VPC: Chọn route table Chọn Creat route table Trong giao diện route table:\nTên: Nhập route table private VPC: Chọn Lab VPC Chọn Creat Trong giao diện private route table:\nChọn Subnet Association Chọn Edit Subnet Association Trong giao diện Edit Subnet Association:\nChọn My Private Subnet Chọn Lưu liên kết Gán cho NAT Gateway Trong giao diện route table private: Chọn Routes Chọn Edit route Trong giao diện Edit route:\nChọn Add route Đích đến: 0.0.0.0/0 Mục tiêu: NAT Gateway Chọn Lưu thay đổi Kiểm tra lại Routes "
+},
+{
+	"uri": "//localhost:1313/vi/6-cleanup/",
+	"title": "Dọn dẹp tài nguyên  ",
+	"tags": [],
+	"description": "",
+	"content": "Chúng ta sẽ tiến hành các bước sau để xóa các tài nguyên chúng ta đã tạo trong bài thực hành này.\nGo to EC2 service management console\nClick Instances. Select both instances that have been created. Click Instance state. Click Terminate instance, then click Terminate to confirm. Go to VPC management console\nClick VPC. Select VPC that have been created. Click Delete. Go to VPC management console\nClick subnet. Select subnets that have been created. Click Delete. Go to VPC management console\nClick Internet Gateway. Select IGW that have been created. Click Delete. Go to VPC management console\nClick route table. Select route tables that have been created. Click Delete. Go to VPC management console\nClick NAT Gateway. Select NAT Gateway that have been created. Click Delete. "
+},
+{
+	"uri": "//localhost:1313/vi/categories/",
+	"title": "Categories",
+	"tags": [],
+	"description": "",
+	"content": ""
+},
+{
+	"uri": "//localhost:1313/vi/tags/",
+	"title": "Tags",
+	"tags": [],
+	"description": "",
+	"content": ""
+}]
